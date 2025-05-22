@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Portal do Armazém</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f7f7f7; }
+        header { background-color: #4CAF50; color: white; padding: 20px; text-align: center; }
+        .container { padding: 20px; max-width: 1200px; margin: auto; }
+        .produtos-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+        .produto { background: white; border: 1px solid #ccc; padding: 16px; border-radius: 8px; text-align: center; }
+        .produto img { width: 150px; height: 150px; object-fit: cover; border-radius: 8px; }
+        .produto h3, .produto p, .produto label, .produto input { margin: 10px 0; }
+        .produto input { width: 80px; padding: 5px; }
+        .pagamento, .cep, .total { background: white; padding: 20px; border-radius: 8px; margin-top: 30px; }
+        footer { text-align: center; padding: 20px; background: #eee; margin-top: 40px; }
+        button { padding: 10px 20px; margin-top: 10px; cursor: pointer; background: #4CAF50; color: white; border: none; border-radius: 5px; }
+        .abas { display: flex; gap: 10px; margin-top: 30px; }
+        .aba { cursor: pointer; padding: 10px; background: #e0e0e0; border-radius: 5px; }
+        .aba-ativa { background: #4CAF50; color: white; }
+        .grid-aba { display: none; margin-top: 20px; }
+        .ativa { display: grid !important; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+        /* Estilos adicionais */
+        :root {
+            --verde-principal: #2e7d32;
+            --verde-claro: #4caf50;
+            --cinza-fundo: #f0f2f5;
+            --branco: #ffffff;
+            --cinza-claro: #e0e0e0;
+            --sombra: rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--cinza-fundo);
+            color: #333;
+        }
+
+        header {
+            background-color: var(--verde-principal);
+            color: var(--branco);
+            padding: 30px 20px;
+            text-align: center;
+            box-shadow: 0 2px 8px var(--sombra);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+        }
+
+        .container {
+            padding: 20px;
+            max-width: 1200px;
+            margin: auto;
+        }
+
+        .abas {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .aba {
+            background-color: var(--cinza-claro);
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        .aba:hover {
+            background-color: var(--verde-claro);
+            color: var(--branco);
+        }
+
+        .aba-ativa {
+            background-color: var(--verde-principal);
+            color: var(--branco);
+        }
+
+        .grid-aba {
+            display: none;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .ativa {
+            display: grid !important;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .produto {
+            background: var(--branco);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 12px var(--sombra);
+            transition: transform 0.2s;
+        }
+
+        .produto:hover {
+            transform: translateY(-5px);
+        }
+
+        .produto img {
+            width: 100%;
+            max-width: 180px;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+
+        .produto h3 {
+            margin: 10px 0 5px;
+            color: var(--verde-principal);
+        }
+
+        .produto input {
+            padding: 8px;
+            width: 100px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+        }
+
+        .total, .pagamento, .cep {
+            background: var(--branco);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 30px;
+            box-shadow: 0 4px 12px var(--sombra);
+        }
+
+        .total h2, .pagamento h2, .cep h2 {
+            color: var(--verde-principal);
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        li::before {
+            content: "✔️ ";
+            color: var(--verde-principal);
+        }
+
+        input[type="text"] {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            width: 200px;
+        }
+
+        button {
+            background-color: var(--verde-principal);
+            color: var(--branco);
+            border: none;
+            border-radius: 8px;
+            padding: 12px 24px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background-color: var(--verde-claro);
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            background: var(--cinza-claro);
+            color: #444;
+            margin-top: 40px;
+        }
+
+        .login-cadastro-menu {
+            display: flex;
+            gap: 10px;
+        }
+        .modal {
+            position: fixed;
+            z-index: 9999;
+            left: 0; top: 0; width: 100vw; height: 100vh;
+            background: rgba(0,0,0,0.4);
+            display: flex; align-items: center; justify-content: center;
+        }
+        .modal-conteudo {
+            background: #fff;
+            padding: 30px 20px;
+            border-radius: 10px;
+            min-width: 300px;
+            position: relative;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+        }
+        .fechar {
+            position: absolute;
+            top: 10px; right: 15px;
+            font-size: 2rem;
+            color: #888;
+            cursor: pointer;
+        }
+        .modal input {
+            width: 90%;
+            margin: 8px 0;
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+        }
+        .modal button {
+            width: 100%;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    
+    <header>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <h1 style="margin-bottom: 0;">Portal do Armazém</h1>
+                <p style="margin-top: 5px;">Frutas frescas direto para sua casa!</p>
+            </div>
+            <div class="login-cadastro-menu">
+                <button onclick="abrirModal('login')">Login</button>
+                <button onclick="abrirModal('cadastro')">Cadastro</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="pesquisa-container" style="display:flex; justify-content:center; margin: 30px 0 10px 0;">
+      <input type="text" id="campo-pesquisa" placeholder="Pesquisar produto..." style="padding:10px; border-radius:8px; border:1px solid #ccc; width:300px; font-size:1rem;">
+      <button onclick="pesquisarProduto()" style="margin-left:10px;">Pesquisar</button>
+    </div>
+
+     <div class="container">
+        <div class="abas">
+            <div class="aba aba-ativa" onclick="mostrarAba('principais', this)">Frutas</div>
+            <div class="aba" onclick="mostrarAba('legumes', this)">Legumes</div>
+            <div class="aba" onclick="mostrarAba('Verduras', this)">Verduras</div>
+ 
+
+        </div>
+
+        <div id="principais" class="grid-aba ativa">
+            <!-- Frutas principais -->
+            <!-- (mesmo conteúdo de antes) -->
+            <div class="produto">
+                <img src="https://1.bp.blogspot.com/-iLq0PFyhb5o/X2kJPh5HNWI/AAAAAAABjiA/nzKTTm4gJyQBMvnNhw9bf6vOEHaqLtx8QCLcBGAsYHQ/s1280/Banana%2BFort.jpeg" alt="Banana" />
+                <h3>Banana</h3>
+                <p>Preço: R$ 4,00/kg</p>
+                <label for="banana-kg">Quantidade (kg):</label>
+                <input type="number" id="banana-kg" name="banana-kg" min="0" step="0.1" />
+            </div>
+            <div class="produto">
+                <img src="https://conteudo.imguol.com.br/c/entretenimento/32/2018/01/18/maca-1516308281068_v2_900x506.jpg" alt="Maçã" />
+                <h3>Maçã</h3>
+                <p>Preço: R$ 6,00/kg</p>
+                <label for="maca-kg">Quantidade (kg):</label>
+                <input type="number" id="maca-kg" name="maca-kg" min="0" step="0.1" />
+            </div>
+            <div class="produto">
+                <img src="https://th.bing.com/th/id/OIP.4iYb_K8czvJsjxgNiW-BigHaE9?rs=1&pid=ImgDetMain" alt="Pera" />
+                <h3>Pera</h3>
+                <p>Preço: R$ 7,00/kg</p>
+                <label for="pera-kg">Quantidade (kg):</label>
+                <input type="number" id="pera-kg" name="pera-kg" min="0" step="0.1" />
+            </div>
+            <div class="produto">
+                <img src="https://cdn.pixabay.com/photo/2017/01/20/15/06/oranges-1995056_1280.jpg" alt="Laranja" />
+                <h3>Laranja</h3>
+                <p>Preço: R$ 5,00/kg</p>
+                <label for="laranja-kg">Quantidade (kg):</label>
+                <input type="number" id="laranja-kg" name="laranja-kg" min="0" step="0.1" />
+            </div>
+            <div class="produto">
+                <img src="https://th.bing.com/th/id/OIP.CkrvTbLdq43dSywvjaOHLAHaFj?rs=1&pid=ImgDetMain" alt="Uva" />
+                <h3>Uva</h3>
+                <p>Preço: R$ 10,00/kg</p>
+                <label for="uva-kg">Quantidade (kg):</label>
+                <input type="number" id="uva-kg" name="uva-kg" min="0" step="0.1" />
+            </div>
+            <div class="produto">
+                <img src="https://3.bp.blogspot.com/-neN4RqBJA8o/WjAcuPZSWxI/AAAAAAAAiEs/zEZRZ1kp3iojyi4wHWmbWR5vuIp5lpkqQCLcBGAs/s1600/morango.jpeg" alt="Morango" />
+                <h3>Morango</h3>
+                <p>Preço: R$ 12,00/kg</p>
+                <label for="morango-kg">Quantidade (kg):</label>
+                <input type="number" id="morango-kg" name="morango-kg" min="0" step="0.1" />
+            </div>
+            <div class="produto">
+                <img src="https://th.bing.com/th/id/OIP.o1YyZHqHXcOOpmkFgTuN6wHaE8" alt="Kiwi" />
+                <h3>Kiwi</h3>
+                <p>Preço: R$ 9,00/kg</p>
+                <label for="kiwi-kg">Quantidade (kg):</label>
+                <input type="number" id="kiwi-kg" name="kiwi-kg" min="0" step="0.1" />
+            </div>
+            <div class="produto">
+                <img src="https://th.bing.com/th/id/OIP.qSQfdrjLYa16Yi2aGAMzuwHaE8" alt="Abacaxi" />
+                <h3>Abacaxi</h3>
+                <p>Preço: R$ 6,50/kg</p>
+                <label for="abacaxi-kg">Quantidade (kg):</label>
+                <input type="number" id="abacaxi-kg" name="abacaxi-kg" min="0" step="0.1" />
+            </div>
+            <div class="produto">
+                <img src="https://th.bing.com/th/id/OIP.sr85CJ6Iu1cbbDBn1gJsFQHaEK?cb=iwp2&rs=1&pid=ImgDetMain" alt="Mamão" />
+                <h3>Mamão</h3>
+                <p>Preço: R$ 4,50/kg</p>
+                <label for="mamao-kg">Quantidade (kg):</label>
+                <input type="number" id="mamao-kg" name="mamao-kg" min="0" step="0.1" />
+            </div>
+            <div class="produto">
+                <img src="https://th.bing.com/th/id/OIP.UNF9voDmSD9rayPy5nP1iwHaE7?cb=iwp2&rs=1&pid=ImgDetMain" alt="Melancia" />
+                <h3>Melancia</h3>
+                <p>Preço: R$ 3,00/kg</p>
+                <label for="melancia-kg">Quantidade (kg):</label>
+                <input type="number" id="melancia-kg" name="melancia-kg" min="0" step="0.1" />
+            </div>
+            <div class="produto">
+                <img src="https://www.entrenamento.com/wp-content/uploads/2019/09/azucar-palma-de-coco.jpg" alt="Coco" />
+                <h3>Coco</h3>
+                <p>Preço: R$ 5,50/kg</p>
+                <label for="coco-kg">Quantidade (kg):</label>
+                <input type="number" id="coco-kg" name="coco-kg" min="0" step="0.1" />
+            </div>
+            <div class="produto">
+                <img src="https://i.pinimg.com/originals/d0/04/07/d00407a9b558b24722b459d8c6ed8c52.jpg" alt="Goiaba" />
+                <h3>Goiaba</h3>
+                <p>Preço: R$ 6,00/kg</p>
+                <label for="goiaba-kg">Quantidade (kg):</label>
+                <input type="number" id="goiaba-kg" name="goiaba-kg" min="0" step="0.1" />
+            </div>
+        </div>
+
+  <div id="legumes" class="grid-aba">
+      <div class="produto">
+        <img src="https://th.bing.com/th/id/R.5c602eb27b8f346d3375b983e375f0a6?rik=Hb%2bCW5qGNc%2bkzw&riu=http%3a%2f%2fsouagro.com.br%2fwp-content%2fuploads%2f2018%2f01%2freceita_com_cenoura_352889045.jpg&ehk=stSpmfxV6upm1LsH7xe5sxWSaN6B8vujVCMyt2ixkaM%3d&risl=&pid=ImgRaw&r=0" alt="Cenoura" />
+        <h3>Cenoura</h3>
+        <p>Preço: R$ 3,50/kg</p>
+        <label for="cenoura-kg">Quantidade (kg):</label>
+        <input type="number" id="cenoura-kg" min="0" step="0.1" />
+      </div>
+      <div class="produto">
+        <img src="https://th.bing.com/th/id/OIP.WOD4LaSQTer54ovr5JFygAHaEK?rs=1&pid=ImgDetMain" alt="Tomate" />
+        <h3>Tomate</h3>
+        <p>Preço: R$ 5,00/kg</p>
+        <label for="tomate-kg">Quantidade (kg):</label>
+        <input type="number" id="tomate-kg" min="0" step="0.1" />
+      </div>
+      <div class="produto">
+        <img src="https://th.bing.com/th/id/R.04323fce055fa6d2fe69b9d5c5e913de?rik=%2f7pgYZAfDDeykQ&pid=ImgRaw&r=0" alt="Brócolis" />
+        <h3>Brócolis</h3>
+        <p>Preço: R$ 6,00/un</p>
+        <label for="brocolis-un">Quantidade (un):</label>
+        <input type="number" id="brocolis-un" min="0" step="1" />
+      </div>
+      <div class="produto">
+        <img src="https://th.bing.com/th/id/OIP.CkZyHrrQDExRVJ0JAUL-QQHaE8?rs=1&pid=ImgDetMain" alt="Pimentão" />
+        <h3>Pimentão</h3>
+        <p>Preço: R$ 4,00/un</p>
+        <label for="pimentao-un">Quantidade (un):</label>
+        <input type="number" id="pimentao-un" min="0" step="1" />
+      </div>
+      <div class="produto">
+        <img src="https://th.bing.com/th/id/OIP.1lmcPO-tVByiPNBLYRsXXgHaE7?rs=1&pid=ImgDetMain" alt="Abóbora" />
+        <h3>Abóbora</h3>
+        <p>Preço: R$ 3,00/kg</p>
+        <label for="abobora-kg">Quantidade (kg):</label>
+        <input type="number" id="abobora-kg" min="0" step="0.1" />
+      </div>
+      <div class="produto">
+        <img src="https://th.bing.com/th/id/R.ea40734c8090fbb5aa222b4b602b9d14?rik=%2bWLNtyF%2bfya3MQ&pid=ImgRaw&r=0" alt="Cebola" />
+        <h3>Cebola</h3>
+        <p>Preço: R$ 2,80/kg</p>
+        <label for="cebola-kg">Quantidade (kg):</label>
+        <input type="number" id="cebola-kg" min="0" step="0.1" />
+      </div>
+      <div class="produto">
+        <img src="https://th.bing.com/th/id/OIP.rsXdyytc3fWHILgkY1dtmgHaEo?rs=1&pid=ImgDetMain" alt="Alho" />
+        <h3>Alho</h3>
+        <p>Preço: R$ 15,00/kg</p>
+        <label for="alho-kg">Quantidade (kg):</label>
+        <input type="number" id="alho-kg" min="0" step="0.1" />
+      </div>
+      <div class="produto">
+        <img src="https://4.bp.blogspot.com/_moGYOaz96-g/TFwdRgSKyWI/AAAAAAAAAqY/5EuRlYe8Udw/s1600/Pepino.jpg" alt="Pepino" />
+        <h3>Pepino</h3>
+        <p>Preço: R$ 4,50/kg</p>
+        <label for="pepino-kg">Quantidade (kg):</label>
+        <input type="number" id="pepino-kg" min="0" step="0.1" />
+      </div>
+      <div class="produto">
+        <img src="https://th.bing.com/th/id/OIP.h_CVSgnYyE5iwd05rhsClgHaE8?rs=1&pid=ImgDetMain" alt="Beterraba" />
+        <h3>Beterraba</h3>
+        <p>Preço: R$ 3,20/kg</p>
+        <label for="beterraba-kg">Quantidade (kg):</label>
+        <input type="number" id="beterraba-kg" min="0" step="0.1" />
+      </div>
+      <div class="produto">
+        <img src="https://th.bing.com/th/id/R.8ec6a3c1f316e74e70bcbae295ec35b6?rik=n6kQG2urRV7iOw&pid=ImgRaw&r=0" alt="Couve-flor" />
+        <h3>Couve-flor</h3>
+        <p>Preço: R$ 5,50/un</p>
+        <label for="couveflor-un">Quantidade (un):</label>
+        <input type="number" id="couveflor-un" min="0" step="1" />
+      </div>
+      <div class="produto">
+        <img src="https://th.bing.com/th/id/OIP.hA5liRmSGi6k1121zHGktQHaE8?rs=1&pid=ImgDetMain" alt="Vagem" />
+        <h3>Vagem</h3>
+        <p>Preço: R$ 6,00/kg</p>
+        <label for="vagem-kg">Quantidade (kg):</label>
+        <input type="number" id="vagem-kg" min="0" step="0.1" />
+      </div>
+      <div class="produto">
+        <img src="https://cdn.vidaativa.pt/uploads/2016/10/beringela-constituicao.jpg" alt="Berinjela" />
+        <h3>Berinjela</h3>
+        <p>Preço: R$ 4,70/kg</p>
+        <label for="berinjela-kg">Quantidade (kg):</label>
+        <input type="number" id="berinjela-kg" min="0" step="0.1" />
+      </div>
+    </div>
+
+<div id="Verduras" class="grid-aba">
+  <div class="produto">
+    <img src="https://th.bing.com/th/id/OIP.w2_Oob2ft5V--3uBDvv7VAAAAA?rs=1&pid=ImgDetMain" alt="Alface" />
+    <h3>Alface</h3>
+    <p>Preço: R$ 2,00/un</p>
+    <label for="alface-un">Quantidade (un):</label>
+    <input type="number" id="alface-un" min="0" step="1" />
+  </div>
+  <div class="produto">
+    <img src="https://th.bing.com/th/id/R.40839a86de965358fd4b9f1ac946ef3a?rik=gb2GyWyTX0S0KA&pid=ImgRaw&r=0" alt="Rúcula" />
+    <h3>Rúcula</h3>
+    <p>Preço: R$ 2,50/un</p>
+    <label for="rucula-un">Quantidade (un):</label>
+    <input type="number" id="rucula-un" min="0" step="1" />
+  </div>
+  <div class="produto">
+    <img src="https://th.bing.com/th/id/OIP.Mvij9L4FV3MSRJUa3Gy3sQHaE8?rs=1&pid=ImgDetMain" alt="Salsinha" />
+    <h3>Salsinha</h3>
+    <p>Preço: R$ 1,50/un</p>
+    <label for="salsinha-un">Quantidade (un):</label>
+    <input type="number" id="salsinha-un" min="0" step="1" />
+  </div>
+  <div class="produto">
+    <img src="https://th.bing.com/th/id/R.c4e4612c2b0027d637e5def256a78e49?rik=Bnkr4FJTudo1ig&riu=http%3a%2f%2ftudoela.com%2fwp-content%2fuploads%2f2017%2f05%2fbeneficios-do-coentro.jpg&ehk=hLgxsCMuOrND4F47m0jjaJJGToQQE6oNPsp2%2f9daA8M%3d&risl=&pid=ImgRaw&r=0" alt="Coentro" />
+    <h3>Coentro</h3>
+    <p>Preço: R$ 1,80/un</p>
+    <label for="coentro-un">Quantidade (un):</label>
+    <input type="number" id="coentro-un" min="0" step="1" />
+  </div>
+  <div class="produto">
+    <img src="https://www.infoescola.com/wp-content/uploads/2010/09/repolho_315517355.jpg" alt="Repolho" />
+    <h3>Repolho</h3>
+    <p>Preço: R$ 3,20/kg</p>
+    <label for="repolho-kg">Quantidade (kg):</label>
+    <input type="number" id="repolho-kg" min="0" step="0.1" />
+  </div>
+  <div class="produto">
+    <img src="https://th.bing.com/th/id/OIP.z5zxQNbylKSGj-BJQPI4ugHaEK?rs=1&pid=ImgDetMain" alt="Espinafre" />
+    <h3>Espinafre</h3>
+    <p>Preço: R$ 3,00/un</p>
+    <label for="espinafre-un">Quantidade (un):</label>
+    <input type="number" id="espinafre-un" min="0" step="1" />
+  </div>
+  <div class="produto">
+    <img src="https://th.bing.com/th/id/OIP.BSSTES7O4G4J6p4AYQxTqAHaEK?rs=1&pid=ImgDetMain" alt="Couve" />
+    <h3>Couve</h3>
+    <p>Preço: R$ 2,80/un</p>
+    <label for="couve-un">Quantidade (un):</label>
+    <input type="number" id="couve-un" min="0" step="1" />
+  </div>
+  <div class="produto">
+    <img src="https://image.tuasaude.com/media/article/wr/ir/cebolinha_62846_l.jpg" alt="Cebolinha" />
+    <h3>Cebolinha</h3>
+    <p>Preço: R$ 1,60/un</p>
+    <label for="cebolinha-un">Quantidade (un):</label>
+    <input type="number" id="cebolinha-un" min="0" step="1" />
+  </div>
+  <div class="produto">
+    <img src="https://www.dicasdemulher.com.br/wp-content/uploads/2017/07/chicoria-4.jpg" alt="Chicória" />
+    <h3>Chicória</h3>
+    <p>Preço: R$ 2,50/un</p>
+    <label for="chicoria-un">Quantidade (un):</label>
+    <input type="number" id="chicoria-un" min="0" step="1" />
+  </div>
+  <div class="produto">
+    <img src="https://vitat.com.br/wp-content/uploads/2020/01/raw-green-organic-endive-salad-p-1.jpg" alt="Escarola" />
+    <h3>Escarola</h3>
+    <p>Preço: R$ 2,70/un</p>
+    <label for="escarola-un">Quantidade (un):</label>
+    <input type="number" id="escarola-un" min="0" step="1" />
+  </div>
+  <div class="produto">
+    <img src="https://www.receiteria.com.br/wp-content/uploads/receitas-com-almeirao.jpg" alt="Almeirão" />
+    <h3>Almeirão</h3>
+    <p>Preço: R$ 2,90/un</p>
+    <label for="almeirao-un">Quantidade (un):</label>
+    <input type="number" id="almeirao-un" min="0" step="1" />
+  </div>
+  <div class="produto">
+    <img src="https://frutasyverduras.info/wp-content/uploads/2019/07/acelga-1024x683.jpg" alt="Acelga" />
+    <h3>Acelga</h3>
+    <p>Preço: R$ 3,10/un</p>
+    <label for="acelga-un">Quantidade (un):</label>
+    <input type="number" id="acelga-un" min="0" step="1" />
+  </div>
+</div>
+
+    <div class="total">
+      <h2>Carrinho de Compras</h2>
+      <button onclick="adicionarAoCarrinho()">Adicionar ao Carrinho</button>
+      <button onclick="abrirCarrinho()" style="margin-left:10px;">Finalizar Pedido</button>
+      <p id="mensagem-carrinho" style="color:green;"></p>
+    </div>
+
+    <div class="pagamento">
+      <h2>Formas de Pagamento</h2>
+      <ul>
+        <li>Cartão de Crédito</li>
+        <li>Cartão de Débito</li>
+        <li>Pix</li>
+      </ul>
+    </div>
+
+    <div class="cep">
+      <h2>Calcular Frete</h2>
+      <label for="cep">Digite seu CEP:</label>
+      <input type="text" id="cep" name="cep" placeholder="00000-000" />
+      <button onclick="calcularFrete()">Calcular</button>
+      <p id="resultado"></p>
+    </div>
+  </div>
+
+  <footer>
+    <p>&copy; 2025 Portal do Armazém. Todos os direitos reservados.</p>
+  </footer>
+
+  <!-- Modal Login/Cadastro -->
+<div id="modal-login-cadastro" class="modal" style="display:none;">
+    <div class="modal-conteudo">
+        <span class="fechar" onclick="fecharModal()">&times;</span>
+        <div id="form-login" style="display:none;">
+            <h2>Login</h2>
+            <form onsubmit="fazerLogin(event)">
+                <input type="email" id="loginEmail" placeholder="E-mail" required /><br>
+                <input type="password" id="loginSenha" placeholder="Senha" required /><br>
+                <button type="submit">Entrar</button>
+            </form>
+            <p id="mensagemLogin"></p>
+        </div>
+        <div id="form-cadastro" style="display:none;">
+            <h2>Cadastro</h2>
+            <form onsubmit="cadastrarUsuario(event)">
+                <input type="text" id="nome" placeholder="Nome" required /><br>
+                <input type="email" id="email" placeholder="E-mail" required /><br>
+                <input type="password" id="senha" placeholder="Senha" required /><br>
+                <button type="submit">Cadastrar</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Carrinho e Pagamento -->
+<div id="modal-carrinho" class="modal" style="display:none;">
+  <div class="modal-conteudo" style="min-width:350px;">
+    <span class="fechar" onclick="fecharCarrinho()">&times;</span>
+    <h2>Seu Carrinho</h2>
+    <div id="itens-carrinho"></div>
+    <h3 id="total-carrinho"></h3>
+    <button onclick="finalizarPedidoWhatsApp()" style="width:100%;margin-top:20px;background:#25d366;">
+      <img src="https://img.icons8.com/color/48/000000/whatsapp.png" alt="WhatsApp" style="height:22px;vertical-align:middle;margin-right:8px;">
+      Finalizar Pedido no WhatsApp
+    </button>
+    <button onclick="abrirFormularioCartao()" style="width:100%;margin-top:10px;background:#1976d2;">
+      <img src="https://th.bing.com/th/id/OIP.G9MYDWm4WliJIoLNF5LMaQHaHa?cb=iwp2&rs=1&pid=ImgDetMain" alt="Cartão" style="height:22px;vertical-align:middle;margin-right:8px;">
+      Finalizar Pedido com Cartão de Crédito ou Débito
+    </button>
+    <button onclick="finalizarPedidoPix()" style="width:100%;margin-top:10px;background:#00bfae;">
+      <img src="https://th.bing.com/th/id/OIP.3gqp5UJTnB2b3W-Uc6k2hQHaEK?cb=iwp2&rs=1&pid=ImgDetMain" alt="Pix" style="height:22px;vertical-align:middle;margin-right:8px;">
+      Finalizar Pedido com Pix
+    </button>
+    <div id="formulario-cartao" style="display:none; margin-top:20px;">
+      <h3>Dados do Cartão</h3>
+      <form onsubmit="enviarCartao(event)">
+        <input type="text" id="nome-cartao" placeholder="Nome no Cartão" required style="width:100%;margin-bottom:8px;"><br>
+        <input type="text" id="numero-cartao" placeholder="Número do Cartão" maxlength="19" required style="width:100%;margin-bottom:8px;"><br>
+        <input type="text" id="validade-cartao" placeholder="Validade (MM/AA)" maxlength="5" required style="width:48%;margin-bottom:8px;">
+        <input type="text" id="cvv-cartao" placeholder="CVV" maxlength="4" required style="width:48%;margin-bottom:8px;float:right;"><br>
+        <button type="submit" style="width:100%;background:#1976d2;">Enviar Dados do Cartão</button>
+      </form>
+    </div>
+    <p id="mensagem-pedido" style="color:green;"></p>
+  </div>
+</div>
+
+  <script>
+    let usuarios = []; // Armazena usuários temporariamente (não persiste ao recarregar)
+
+function cadastrarUsuario(event) {
+    event.preventDefault();
+    const nome = document.getElementById('nome').value;
+    const email = document.getElementById('email').value;
+    const senha = document.getElementById('senha').value;
+
+    const usuarioExistente = usuarios.find(user => user.email === email);
+    if (usuarioExistente) {
+        alert("Usuário já cadastrado com este e-mail.");
+        return;
+    }
+
+    usuarios.push({ nome, email, senha });
+    alert("Cadastro realizado com sucesso!");
+    document.getElementById('nome').value = "";
+    document.getElementById('email').value = "";
+    document.getElementById('senha').value = "";
+}
+
+function fazerLogin(event) {
+    event.preventDefault();
+    const email = document.getElementById('loginEmail').value;
+    const senha = document.getElementById('loginSenha').value;
+
+    const usuario = usuarios.find(user => user.email === email && user.senha === senha);
+    const msg = document.getElementById("mensagemLogin");
+
+    if (usuario) {
+        msg.textContent = `Bem-vindo, ${usuario.nome}!`;
+        msg.style.color = "green";
+    } else {
+        msg.textContent = "E-mail ou senha incorretos.";
+        msg.style.color = "red";
+    }
+}
+
+    function mostrarAba(id, aba) {
+      document.querySelectorAll('.grid-aba').forEach(div => div.classList.remove('ativa'));
+      document.getElementById(id).classList.add('ativa');
+      document.querySelectorAll('.aba').forEach(a => a.classList.remove('aba-ativa'));
+      aba.classList.add('aba-ativa');
+    }
+
+    function calcularFrete() {
+      const cep = document.getElementById("cep").value;
+      const resultado = document.getElementById("resultado");
+      if (cep.match(/^\d{5}-?\d{3}$/)) {
+        resultado.textContent = "Frete calculado com sucesso: R$ 15,00 (simulado)";
+      } else {
+        resultado.textContent = "Por favor, digite um CEP válido.";
+      }
+    }
+
+    let carrinho = [];
+
+function adicionarAoCarrinho() {
+  carrinho = [];
+  const precos = {
+    "banana-kg": 4, "maca-kg": 6, "pera-kg": 7, "laranja-kg": 5, "uva-kg": 10,
+    "morango-kg": 12, "kiwi-kg": 9, "abacaxi-kg": 6.5, "mamao-kg": 4.5,
+    "melancia-kg": 3, "coco-kg": 5.5, "goiaba-kg": 6,
+    "cenoura-kg": 3.5, "tomate-kg": 5, "brocolis-un": 6, "pimentao-un": 4,
+    "abobora-kg": 3, "cebola-kg": 2.8, "alho-kg": 15, "pepino-kg": 4.5,
+    "beterraba-kg": 3.2, "couveflor-un": 5.5, "vagem-kg": 6, "berinjela-kg": 4.7,
+    "alface-un": 2.0, "rucula-un": 2.50, "salsinha-un": 1.50, "coentro-un": 1.80,
+    "repolho-kg": 3.20, "espinafre-un": 3, "couve-un": 2.80, "cebolinha-un": 1.60,
+    "chicoria-un": 2.50, "escarola-un": 2.70, "almeirao-un": 2.90, "acelga-un": 3.10
+  };
+
+  for (let id in precos) {
+    const input = document.getElementById(id);
+    if (input) {
+      const qtd = parseFloat(input.value) || 0;
+      if (qtd > 0) {
+        let nome = input.parentElement.querySelector('h3')?.textContent || id;
+        let unidade = id.includes('-kg') ? 'kg' : 'un';
+        carrinho.push({ nome, qtd, preco: precos[id], unidade });
+      }
+    }
+  }
+  const msg = document.getElementById("mensagem-carrinho");
+  if (carrinho.length > 0) {
+    msg.textContent = "Itens adicionados ao carrinho!";
+  } else {
+    msg.textContent = "Nenhum item selecionado.";
+  }
+  setTimeout(() => { msg.textContent = ""; }, 2000);
+}
+
+function abrirCarrinho() {
+  if (carrinho.length === 0) {
+    document.getElementById("mensagem-carrinho").textContent = "Adicione itens ao carrinho antes de finalizar!";
+    setTimeout(() => { document.getElementById("mensagem-carrinho").textContent = ""; }, 2000);
+    return;
+  }
+  let html = "<ul>";
+  let total = 0;
+  carrinho.forEach(item => {
+    html += `<li>${item.nome}: ${item.qtd} ${item.unidade} x R$ ${item.preco.toFixed(2)} = <b>R$ ${(item.qtd * item.preco).toFixed(2)}</b></li>`;
+    total += item.qtd * item.preco;
+  });
+  html += "</ul>";
+  document.getElementById("itens-carrinho").innerHTML = html;
+  document.getElementById("total-carrinho").textContent = `Total: R$ ${total.toFixed(2)}`;
+  document.getElementById("mensagem-pedido").textContent = "";
+  document.getElementById("modal-carrinho").style.display = "flex";
+}
+
+function fecharCarrinho() {
+  document.getElementById("modal-carrinho").style.display = "none";
+}
+
+function finalizarPedido(event) {
+  event.preventDefault();
+  const forma = document.querySelector('input[name="pagamento"]:checked');
+  if (!forma) return;
+
+  // Monta o resumo do pedido para enviar no WhatsApp
+  let mensagem = "Olá! Gostaria de finalizar meu pedido:%0A";
+  carrinho.forEach(item => {
+    mensagem += `- ${item.nome}: ${item.qtd} ${item.unidade} x R$ ${item.preco.toFixed(2)} = R$ ${(item.qtd * item.preco).toFixed(2)}%0A`;
+  });
+  let total = carrinho.reduce((soma, item) => soma + item.qtd * item.preco, 0);
+  mensagem += `Total: R$ ${total.toFixed(2)}%0AForma de pagamento: ${forma.value}`;
+
+  // Link WhatsApp
+  const whatsappLink = `https://api.whatsapp.com/send/?phone=5545998045507&text=${mensagem}&type=phone_number&app_absent=0&wame_ctl=1`;
+
+  // Redireciona para o WhatsApp
+  window.open(whatsappLink, '_blank');
+
+  document.getElementById("mensagem-pedido").textContent = `Redirecionando para o WhatsApp...`;
+
+  setTimeout(() => {
+    fecharCarrinho();
+    carrinho = [];
+    // Limpa os campos de quantidade
+    const inputs = document.querySelectorAll('.produto input[type="number"]');
+    inputs.forEach(input => input.value = "");
+  }, 2000);
+}
+
+    function abrirModal(tipo) {
+    document.getElementById('modal-login-cadastro').style.display = 'flex';
+    document.getElementById('form-login').style.display = tipo === 'login' ? 'block' : 'none';
+    document.getElementById('form-cadastro').style.display = tipo === 'cadastro' ? 'block' : 'none';
+    document.getElementById('mensagemLogin').textContent = "";
+}
+
+function fecharModal() {
+    document.getElementById('modal-login-cadastro').style.display = 'none';
+}
+
+function pesquisarProduto() {
+  const termo = document.getElementById('campo-pesquisa').value.trim().toLowerCase();
+  const produtos = document.querySelectorAll('.produto');
+  let encontrou = false;
+  produtos.forEach(produto => {
+    const nome = produto.querySelector('h3').textContent.toLowerCase();
+    if (nome.includes(termo)) {
+      produto.style.display = '';
+      encontrou = true;
+    } else {
+      produto.style.display = 'none';
+    }
+  });
+  // Se o campo estiver vazio, mostra todos
+  if (termo === "") {
+    produtos.forEach(produto => produto.style.display = '');
+  }
+}
+function finalizarPedidoWhatsApp() {
+  // Monta o resumo do pedido para enviar no WhatsApp
+  let mensagem = "Quero finalizar meu pedido:%0A";
+  let total = 0;
+  carrinho.forEach(item => {
+    mensagem += `- ${item.nome}: ${item.qtd} ${item.unidade} x R$ ${item.preco.toFixed(2)} = R$ ${(item.qtd * item.preco).toFixed(2)}%0A`;
+    total += item.qtd * item.preco;
+  });
+  mensagem += `Total: R$ ${total.toFixed(2)}`;
+
+  // Link WhatsApp com mensagem personalizada
+  const whatsappLink = `https://api.whatsapp.com/send/?phone=5545998045507&text=${mensagem}&type=phone_number&app_absent=0&wame_ctl=1`;
+
+  window.open(whatsappLink, '_blank');
+  document.getElementById("mensagem-pedido").textContent = `Redirecionando para o WhatsApp...`;
+
+  setTimeout(() => {
+    fecharCarrinho();
+    carrinho = [];
+    // Limpa os campos de quantidade
+    const inputs = document.querySelectorAll('.produto input[type="number"]');
+    inputs.forEach(input => input.value = "");
+  }, 2000);
+}
+
+function finalizarPedidoCartao() {
+  alert("Para finalizar com Cartão de Crédito, informe os dados do cartão ao entregador ou aguarde contato.");
+  fecharCarrinho();
+  carrinho = [];
+  const inputs = document.querySelectorAll('.produto input[type="number"]');
+  inputs.forEach(input => input.value = "");
+}
+
+function finalizarPedidoPix() {
+  // Mostra a chave Pix em destaque
+  alert("Para finalizar com Pix, nossa chave é:\n\n5545998045507\n\nEnvie o comprovante para nosso WhatsApp.");
+  fecharCarrinho();
+  carrinho = [];
+  const inputs = document.querySelectorAll('.produto input[type="number"]');
+  inputs.forEach(input => input.value = "");
+}
+
+function abrirFormularioCartao() {
+  document.getElementById('formulario-cartao').style.display = 'block';
+}
+
+function enviarCartao(event) {
+  event.preventDefault();
+  // Aqui você pode tratar os dados do cartão (apenas simulação)
+  alert("Dados do cartão enviados com sucesso! Seu pedido será processado.");
+  fecharCarrinho();
+  carrinho = [];
+  // Limpa os campos de quantidade
+  const inputs = document.querySelectorAll('.produto input[type="number"]');
+  inputs.forEach(input => input.value = "");
+  // Limpa o formulário do cartão
+  document.getElementById('formulario-cartao').style.display = 'none';
+  event.target.reset();
+}
+  </script>
+</body>
+</html>
+
